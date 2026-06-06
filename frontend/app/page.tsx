@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
 
 export default function Home() {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState([]);
 
   const sendMessage = async () => {
     if (message.trim() === "") return;
@@ -12,15 +13,18 @@ export default function Home() {
     const userMessage = message;
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: userMessage,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: userMessage,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -38,7 +42,7 @@ export default function Home() {
 
       setMessage("");
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
     }
   };
 
@@ -51,64 +55,39 @@ export default function Home() {
 
       {/* Chat Area */}
       <div className="flex-1 p-4 overflow-y-auto">
-
-        {/* Welcome Card - Always Visible */}
+        
+        {/* Welcome Card */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-5 rounded-xl mb-4 shadow-lg">
           <h2 className="text-2xl font-bold mb-3">
             Welcome to AI ChatBot 🚀
           </h2>
 
-          <p className="mb-3">
-            I can answer questions related to:
-          </p>
+          <p className="mb-3">I can answer questions related to:</p>
 
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              AI
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              Machine Learning
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              React
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              JavaScript
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              Node.js
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              HTML
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              CSS
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              Time
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              Date
-            </span>
-
-            <span className="bg-white text-black px-3 py-1 rounded-full text-sm">
-              Jokes
-            </span>
+            {[
+              "AI",
+              "Machine Learning",
+              "React",
+              "JavaScript",
+              "Node.js",
+              "HTML",
+              "CSS",
+              "Time",
+              "Date",
+              "Jokes",
+            ].map((item) => (
+              <span
+                key={item}
+                className="bg-white text-black px-3 py-1 rounded-full text-sm"
+              >
+                {item}
+              </span>
+            ))}
           </div>
 
           <div className="bg-white text-black p-3 rounded-lg">
-            <p className="font-semibold">
-              Examples:
-            </p>
-
+            <p className="font-semibold">Examples:</p>
             <p className="text-sm mt-2">
               • What is AI? <br />
               • What is Machine Learning? <br />
@@ -144,11 +123,9 @@ export default function Home() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage();
-              }
+              if (e.key === "Enter") sendMessage();
             }}
-            className="flex-1 border p-2 rounded text-black placeholder-gray-500 outline-none"
+            className="flex-1 border p-2 rounded text-black outline-none"
           />
 
           <button
